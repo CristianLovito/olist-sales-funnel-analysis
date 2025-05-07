@@ -2,12 +2,14 @@
 
 ## 📖 Project Overview
 
-This project analyzes the **Olist e-commerce dataset**, with the main goal of identifying key stages in the **sales funnel** and understanding where **customers drop off** in their journey. By **cleaning**, **processing**, and **analyzing** the data, the project aims to uncover insights that can help **improve customer retention**, **optimize marketing efforts**, and **enhance overall sales performance**.
+This project analyzes the **Olist e-commerce dataset**, with the main goal of identifying key stages in the **sales funnel** and understanding where **customers drop off** in their journey. By **cleaning**, **processing**, and **analyzing** the data, the project aims to uncover insights that can help **improve customer retention**, **optimize marketing efforts**, **enhance overall sales performance** and, **reduce customer churn rate**.
 
 ### 🔍The analysis will focus on the following:
-- Examining the customer journey from initial interaction to purchase.
-- Identifying drop-off points and stages where customers abandon the funnel.
-- Analyzing factors influencing these drop-offs, such as product types, payment methods, and review ratings.
+- Examining the customer fulfillment journey — from order placement to product review.
+
+- Identifying drop-off points across each stage of the fulfillment funnel.
+
+- Analyzing how review scores relate to operational issues (e.g., delivery delays).
 
 
 ## 📁 Project Structure
@@ -15,17 +17,9 @@ This project analyzes the **Olist e-commerce dataset**, with the main goal of id
 ```
 olist-sales-funnel-analysis/
 ├── data/
-│ ├── grphs/
+│ ├── charts/
 │ └── raw/ # Contains original datasets from Olist
-├── sql/ # SQL scripts for various analysis steps, each project has its own folder
-│ ├── funnel-analysis/
-│ ├── price-analysis/
-│ └── segmentation-analysis/
-├── notebooks/ # Jupyter notebooks (if any) for exploratory data analysis (EDA)
-│ ├── funnel-analysis/
-│ ├── price-analysis/
-│ └── segmentation-analysis/
-├── reports/ # Contains any generated reports, graphs, or final conclusions
+├── sql/ # SQL scripts for various analysis steps, 
 ├── .gitignore
 ├── README.md
 ```
@@ -462,4 +456,48 @@ Only **3%** of reviews directly complain about **customer service**, but many re
 #### ❓Review interface confusion
 Finally, **2.4%** of the reviews appear to be **user errors** — people leaving good comments but assigning bad scores. This seems like an **interface or user experience flaw**, but it’s minor and not a core issue.
 
+
 ---
+
+
+## Final Recomendations
+### 🚚 Shipping & Delivery Recommendations
+
+- **1**. Implement a **Basic Order Tracking System**
+Customers are repeatedly **left in the dark** about their order status. Even a simple tracking panel (on web/app) that shows if the product is shipped, in transit, or delayed would **dramatically reduce frustration**. Visibility builds trust — and right now, that **trust is broken**.
+
+- **2**. Audit and **Improve Carrier Performance**
+Based on the analysis, delays and damaged/missing products are the two most common complaints. This points to **poor coordination between Olist and external delivery partners**. Olist should run a performance audit on their last-mile delivery operations and enforce stricter SLAs (Service Level Agreements) with carriers.
+
+- **3**. Take Control of Packaging Standards
+**Too many orders** are arriving **broken** or **incomplete**. Olist should define and **enforce packaging quality guidelines** for all sellers — or centralize packaging in fulfillment hubs where possible. **Prevention** is better than **refund** policies.
+
+- **4**. **Focus on Prevention**, Not Just Apologies
+Don't just offer return/refund policies — customers would rather not have the problem at all. Olist must invest in **upstream logistics improvements** rather than relying on compensation to handle **service failures**.
+
+---
+
+### 🛒 Product Quality & Seller Oversight Recommendations
+
+- **1**. **Reduce misleading listings through stricter product listing audits**. Olist should tighten the control over product descriptions, enforcing a clear, standardized format. Many customer complaints stem from **items that don’t match expectations**, which likely means sellers are overselling or misrepresenting their products. A small percentage of poor listings can have a **large negative impact** on customer trust.
+
+- **2** **Seller quality audits** + **penalties for repeat issues**. Implement automatic seller scoring based on review trends, returns, and complaints. Sellers with frequent issues (e.g., inaccurate descriptions, low review averages) should face **visibility penalties**, reduced priority in listings, or even suspension if issues persist. This **shifts pressure to the seller** side and helps **protect the Olist brand**.
+
+- **3** **Customer-visible seller trust indicators**. Add a simple “Trusted Seller” badge system or “Verified Product Quality” tag for listings with good **long-term performance**. Customers need reassurance that Olist has vetted what’s being sold, not just acting as a middleman. This **boosts perceived reliability** of the platform and lowers **buyer anxiety**.
+
+
+### Final Thoughts
+
+- This analysis showed how operational inefficiencies, especially in delivery and product oversight, directly impact customer satisfaction. Even with limited data, I extracted meaningful insights and actionable suggestions. There’s still room for deeper supply chain analysis and user experience audits — but this is a strong starting point.
+
+### 📌 Clarification: 
+*This analysis was built using available timestamps from the Olist dataset to recreate key funnel stages. Industry-standard metrics and average expectations for delivery timelines, such as typical approval-to-shipping and shipping-to-delivery windows, were used to define realistic thresholds. While exact SLA benchmarks from Olist were not available, the cleaning and logic applied here align with e-commerce best practices for identifying delays and operational issues.*
+
+
+---
+---
+
+*This project was built through grit, trial and error, and a relentless drive to improve.
+By Cristian Lovito — not a data expert, yet. But damn sure on the way.*
+
+[GitHub](https://github.com/CristianLovito) · [LinkedIn](https://www.linkedin.com/in/cristian-lovito-06386521a/)
