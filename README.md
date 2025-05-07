@@ -2,9 +2,9 @@
 
 ## 📖 Project Overview
 
-This project analyzes the Olist e-commerce dataset, with the main goal of identifying key stages in the sales funnel and understanding where customers drop off in their journey. By cleaning, processing, and analyzing the data, the project aims to uncover insights that can help improve customer retention, optimize marketing efforts, and enhance overall sales performance.
+This project analyzes the **Olist e-commerce dataset**, with the main goal of identifying key stages in the **sales funnel** and understanding where **customers drop off** in their journey. By **cleaning**, **processing**, and **analyzing** the data, the project aims to uncover insights that can help **improve customer retention**, **optimize marketing efforts**, and **enhance overall sales performance**.
 
-The analysis will focus on the following:
+### 🔍The analysis will focus on the following:
 - Examining the customer journey from initial interaction to purchase.
 - Identifying drop-off points and stages where customers abandon the funnel.
 - Analyzing factors influencing these drop-offs, such as product types, payment methods, and review ratings.
@@ -15,8 +15,8 @@ The analysis will focus on the following:
 ```
 olist-sales-funnel-analysis/
 ├── data/
-│ ├── raw/ # Contains original datasets from Olist
-│ └── cleaned/ # Contains any cleaned datasets, temporary or final
+│ ├── grphs/
+│ └── raw/ # Contains original datasets from Olist
 ├── sql/ # SQL scripts for various analysis steps, each project has its own folder
 │ ├── funnel-analysis/
 │ ├── price-analysis/
@@ -32,16 +32,14 @@ olist-sales-funnel-analysis/
 ## 🛠 Installation
 No external dependencies for now. Just clone the repo and start exploring the data or running SQL queries.
 
-Now, let’s move on to the next section whenever you're ready. We could cover Usage next, or you can let me know if you'd like to adjust anything before proceeding!
+---
 
-## 📊 Analysis
-
-### Data Cleaning
+## 🧹Data Cleaning
 
 ### 📊 Step 1: `order_status` and `order_approved_at` 
 
-Valid Statuses, Approval Timestamps, and Delay Threshold
-This first step ensures we’re only analyzing orders that reached a valid funnel stage and passed basic quality checks.
+Valid Statuses and Approval Timestamps - 
+This first step ensures I'm **only analyzing orders that reached a valid funnel stage** and passed basic quality checks.
 
 ```sql
 WITH cleaned_orders_step1 AS (
@@ -62,34 +60,48 @@ SELECT *
 FROM cleaned_orders_step1
 ```
 
-#### 🔍 Cleaning Logic Summary
+#### 🔍 Step 1: Cleaning Order Status & Approval Timestamp
 
-❌ Dropped rows where `order_status` was in:
+#### 📦 Cleaning order_status
 
-`'canceled'`, `'unavailable'`, `'processing'`, `'invoiced'`, `'created'`, `'approved'`
+- ❌ Dropped rows where `order_status` was in:
+**'canceled', 'unavailable', 'processing', 'invoiced', 'created', 'approved'**
+(These orders were not shipped or delivered, so they cannot proceed through the funnel)
 
-✅ Kept only:
+- 📉 Rows Dropped: 1,856
 
-`'delivered'`, `'shipped'` (only these can reach key funnel stages)
+#### 🕒 Cleaning order_approved_at
+- 🧼 Dropped rows with NULL `order_approved_at`
+(14 rows had no approval timestamp despite having other timestamps — invalid data)
 
-📉 Rows Dropped: 1,856
-✅ Remaining: 97,585
+- 📉 Rows Dropped: 14
 
-🧹 Approval Timestamp Cleaning
-🔍 14 rows had NULL `order_approved_at`, despite having other timestamps
+#### 🕐 Approval Delay Outliers
+- 🔍 Dropped rows where approval delay was > 20 days
+(Approval delays greater than 20 days are likely anomalies and considered invalid)
 
-🧠 Approval is mandatory to progress — these rows are invalid
+- 📉 Rows Dropped: 4
 
-📉 Rows Dropped: 14 ✅ Remaining: 97,571
+#### ✅ Cleaned Data Summary
+**1**. Kept only valid order statuses: 'delivered', 'shipped'
 
-🕐 Approval Delay Outliers
-🔍 Dropped rows where approval delay was > 20 days
+- ❌ Dropped: 1,856 rows
 
-Reason: Unreasonably long approval times are likely anomalies
+**2**. Mandatory approval timestamp check
 
-📉 Rows Dropped: 4 ✅ Final Remaining: 97,567
+- ❌ Dropped: 14 rows with NULL order_approved_at
+
+**3**. Approval delay outliers (approval delay > 20 days)
+
+- ❌ Dropped: 4 rows
+
+### ✅ Remaining clean data: 97,567 rows
 
 ---
+### 🔍 order_approved_at logic 
+
+This query was used to validate the logical consistency between `order_purchase_timestamp` and `order_approved_at`.
+
 ```sql
 SELECT
     CASE 
@@ -102,19 +114,19 @@ FROM cleaned_orders_step1
 GROUP BY approval_timing_category
 ORDER BY row_count DESC
 ```
-❌ Rows with approval before purchase: 0
 
-🟡 Rows with approval at same second: 1,265 (Kept as plausible)
+#### 🔍 Cleaning Logic Summary
 
-✅ Rows approved after purchase: 96,306
+- ❌ Rows with approval before purchase: 0
+
+- 🟡 Rows with approval at same second: 1,265 (Kept as plausible)
+
+- ✅  Rows approved after purchase: 96,306
 
 
-📉 Rows Dropped: 0 ✅ Final Remaining: 97,567
+- 📉 Rows Dropped: 0 ✅ Final Remaining: 97,567
 
 ### Remaining clean data ✅ 97,567 rows
-
-
-*This query was used to validate the logical consistency between `order_purchase_timestamp` and `order_approved_at`.*
 
 *I didn't include this filter in the main CTE because the data was already clean — no rows had approval before purchase, and same-second approvals (1,265 rows) were considered plausible and kept. This validation step is shown here to demonstrate thorough data quality checks.*
 
@@ -122,7 +134,7 @@ ORDER BY row_count DESC
 
 ### 📊 Step 2 : `order_delivered_carrier_date` & Carrier Pickup Time
 
-In this step, I cleaned the order_delivered_carrier_date and days_to_carrier fields to ensure that no invalid or extreme values skew the analysis.
+In this step, I cleaned the `order_delivered_carrier_date` and `days_to_carrier` fields to ensure that no invalid or extreme values skew the analysis.
 
 ```sql
 WITH cleaned_orders_step2 AS (
@@ -153,9 +165,8 @@ SELECT *
 FROM cleaned_orders_step2
 ```
 
-#### 🔍 Cleaning Logic Summary
+#### 🔍 Cleaning `order_delivered_carrier_date`
 
-📦 Cleaning `order_delivered_carrier_date`
 
 - 🔍 Null values in `order_delivered_carrier_date`:
 ❌ Dropped: 2 rows
@@ -176,7 +187,7 @@ FROM cleaned_orders_step2
 **1.** Null values or invalid sequencing  
 - ❌ Dropped 1,361 rows
 
-**2.** `days_to_carrier` acceptable range is 2 hours to 15 days; all values outside this range are considered unrealistic.
+**2.** `days_to_carrier` acceptable range is **2 hours to 15 days**; all values outside this range are considered unrealistic.
 
 - ❌ Dropped rows: 935 (Too fast - likely system/logging error) 
 - ❌ Dropped rows: 1,334 (Too slow - likely operational failures or data issues)
@@ -187,7 +198,7 @@ FROM cleaned_orders_step2
 
 ### 📦 Step 3:  `order_delivered_customer_date` and Delivery Time Calculation
 
-This step focuses on cleaning the final delivery timestamp to customers and computing realistic delivery durations. We apply quality filters to ensure logical delivery sequences and eliminate outliers in delivery speed.
+This step focuses on cleaning the **final delivery timestamp** to customers and computing **realistic delivery durations**. We apply quality filters to ensure logical delivery sequences and eliminate outliers in **delivery speed**.
 
 ```sql
 WITH cleaned_orders_step3 AS (
@@ -230,30 +241,30 @@ SELECT *
 FROM cleaned_orders_step3
 ```
 
-#### 🔍 Cleaning order_delivered_customer_date
+#### 🔍 Cleaning `order_delivered_customer_date`
 
-- 🧼 Dropped rows with NULL order_delivered_customer_date
+- 🧼 Dropped rows with NULL `order_delivered_customer_date`
 📉 Rows Dropped: 1,070
 
 - ⛔ Dropped rows where delivery to customer was before carrier pickup
 📉 Rows Dropped: 23
 
-#### ⏱️ Cleaning days_to_customer (Delivery Time)
+#### ⏱️ Cleaning `days_to_customer` (Delivery Time)
 
-- ⚡ Dropped deliveries that were too fast (less than 1 day) → implausible for real-world shipping
+- ⚡ Dropped deliveries that were too fast (**less than 1 day**) → implausible for real-world shipping
 📉 Rows Dropped: 2,499
 
-- 🐢 Dropped deliveries that took over 60 days → likely extreme cases or data issues
+- 🐢 Dropped deliveries that took over **60 days** → likely extreme cases or data issues
 📉 Rows Dropped: 217
 
 #### ✅ Cleaned Data Summary
 **1**. Null values or invalid sequencing
 
-- ❌ Dropped rows: 1,070 (order_delivered_customer_date is NULL)
+- ❌ Dropped rows: 1,070 (`order_delivered_customer_date` is NULL)
 
-- ❌ Dropped rows: 23 (order_delivered_customer_date before order_delivered_carrier_date)
+- ❌ Dropped rows: 23 (`order_delivered_customer_date` before `order_delivered_carrier_date`)
 
-**2**. days_to_customer acceptable range is 1 to 60 days; all values outside this range are considered unrealistic.
+**2**. `days_to_customer` acceptable range is **1 to 60 days**; all values outside this range are considered unrealistic.
 
 - ❌ Dropped rows: 2,499 (Delivery too fast: less than 1 day)
 
@@ -285,13 +296,13 @@ ORDER BY row_count DESC
 - ❌ 6,907 rows
 
 *Note:
-I was also curious about this aspect, but it doesn’t fit directly into the current step. I wanted to show this data as part of a future step. Specifically, I plan to explore if the orders delivered later than estimated are linked to customer complaints.*
+I was also curious about this aspect, but it doesn’t fit directly into the current step. I wanted to show this data as part of a future analysis. Specifically, I plan to explore if the orders delivered later than estimated are linked to customer complaints.*
 
 ---
 
 ### ✅ Step 4: Join with Reviews — Customer Satisfaction Analysis
 
-In this step, we integrated the `olist_order_reviews` table to incorporate customer satisfaction scores and focus on orders with positive feedback.
+In this step, we integrated the `olist_order_reviews` table to incorporate **customer satisfaction scores** and focus on orders with positive feedback.
 
 ```sql
 WITH cleaned_orders_step4 AS ( 
@@ -378,9 +389,9 @@ These orders reflect a positive customer experience and were kept for further an
 ---
 ### 📉 Funnel Drop-off Summary
 
-This next table visualizes the progressive drop-offs through each major stage of the e-commerce fulfillment funnel. From the initial 99,441 orders, each cleaning step eliminates rows due to missing values, unrealistic timeframes, or unsatisfactory review scores.
+This next table visualizes the progressive drop-offs through each major stage of the **e-commerce fulfillment funnel**. From the initial **99,441 orders**, each cleaning step eliminates rows due to **missing values, unrealistic timeframes, or unsatisfactory review scores**.
 
-The most significant drop occurred when filtering only positively reviewed orders (review_score ≥ 4), representing a 20.74% drop in rows at that stage.
+**The most significant drop** occurred when filtering only **positively reviewed orders (review_score ≥ 4)**, representing a **20.74%** drop in rows at that stage.
 
 | **Stage**             | **Remaining Rows** | **Dropped Rows (%)** | **Cumulative % Kept** | **Step** |
 | --------------------- | ------------------ | -------------------- | --------------------- | -------- |
@@ -393,7 +404,62 @@ The most significant drop occurred when filtering only positively reviewed order
 | Positively Reviewed   | 70,818             | 20.74%               | 71.32%                | Step 4   |
 
 
-*Or a graph if you like more*
+#### *Or a graph if you like more*
 
-![Sales Funnel Graph](data\Graphs\sales-funnel-graph.png)
+![Sales Funnel Graph](data\charts\sales-funnel-graph.png)
+*Note:* The chart was created 100% using AI after 20 minutes of iterations with python. The AI helped in generating and optimizing the visual representation of the data cleaning process efficiently.
 
+---
+
+### 📉Funnel Drop-off Analysis:
+
+Exploring the **20.74%** Drop
+As part of the analysis, I investigated the reasons behind the **20.74%** drop in the funnel, focusing specifically on the **1-2 score reviews**. Below is the breakdown of the most common complaints raised by customers.
+
+### Key Findings from 1-2 Star Reviews:
+#### Issue	Percentage of Total Complaints	Count (300 Valid Reviews)
+
+
+#### 🚚Shipping/Delivery Issues (Total)	63.41%	190
+- Missing orders when ordering multiple products	9.76%	30
+- Delayed orders or not received	51.83%	155
+- Product blocked in customs	2.44%	7
+
+
+#### 📦Product Issues (Total)	30.49%	91
+- Incorrect version of the product	4.27%	13
+- Sent incorrect product	4.27%	13
+- Product received with missing pieces	3.66%	11
+- Product received broken	10.98%	33
+- Misleading product	1.83%	6
+- Bad quality of the products	5.49%	17
+
+
+#### 🧑‍💼Order/Customer Service Issues (Total)	3.05%	9
+- Could not cancel the order	1.83%	5
+- Bad attention (poor customer service)	1.22%	4
+
+
+#### ❓Review/Score Confusion (Total)	2.44%	7
+- Good review, bad score?	2.44%	7
+
+
+---
+
+
+### 🧠 Summary of 1–2 Star Review Analysis
+
+#### 🚚Main source of negative reviews (Shipping)
+
+The biggest issue by far **(63.4%)** is the **shipping and delivery process**, with over half **(51.8%)** of total complaints related to products arriving **extremely late** or not arriving at all. Many customers mention that they don’t even receive updates on the delivery status, which leads to complete **frustration, loss of trust**, and giving up on the order.
+
+#### 📦Product-related issues
+The second most frequent cause **(30.5%)** is **the product itself** — whether it arrives **broken**, is of **poor quality**, or it's **the wrong item**. Even when the product is delivered, there’s a significant **1 in 3 risk** that it disappoints. Many users state outright that they **would not order again** due to this.
+
+#### 🧑‍💼Customer service perception
+Only **3%** of reviews directly complain about **customer service**, but many reviews from other categories imply a **lack of support** when problems arise. **The silence or inaction from the company when customers need help** severely worsens the experience, even if it’s not always directly mentioned.
+
+#### ❓Review interface confusion
+Finally, **2.4%** of the reviews appear to be **user errors** — people leaving good comments but assigning bad scores. This seems like an **interface or user experience flaw**, but it’s minor and not a core issue.
+
+---
