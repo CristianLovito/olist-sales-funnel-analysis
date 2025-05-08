@@ -5,9 +5,6 @@
 - [English](README.md)
 - [Español](README.español.md)
 
-readme español
-
-
 ## 📖 Descripción del Proyecto
 
 Este proyecto analiza el **e-commerce dataset Olist**, con el objetivo principal de identificar las etapas clave en el **funnel de ventas** y entender en qué puntos los **clientes abandonan su recorrido**. Mediante la **limpieza**, **procesamiento** y **análisis** de los datos, el proyecto busca descubrir insights que pueda ayudar a mejorar la **retención de clientes**, **optimizar los esfuerzos de marketing**, **mejorar el rendimiento general de ventas** y **reducir la tasa de abandono de los clientes**.

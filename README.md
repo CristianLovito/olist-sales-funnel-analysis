@@ -6,8 +6,6 @@
 - [English](README.md)
 - [Español](README.español.md)
 
-readme english
-
 ## 📖 Project Overview
 
 This project analyzes the **Olist e-commerce dataset**, with the main goal of identifying key stages in the **sales funnel** and understanding where **customers drop off** in their journey. By **cleaning**, **processing**, and **analyzing** the data, the project aims to uncover insights that can help **improve customer retention**, **optimize marketing efforts**, **enhance overall sales performance** and, **reduce customer churn rate**.
