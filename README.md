@@ -1,4 +1,12 @@
+
 # Olist Sales Funnel Analysis
+
+
+## Languages Available:
+- [English](README.md)
+- [Español](README.español.md)
+
+readme english
 
 ## 📖 Project Overview
 
@@ -21,7 +29,8 @@ olist-sales-funnel-analysis/
 │ └── raw/ # Contains original datasets from Olist
 ├── sql/ # SQL scripts for various analysis steps, 
 ├── .gitignore
-├── README.md
+├── README.español.md
+└── README.md
 ```
 ## 🛠 Installation
 No external dependencies for now. Just clone the repo and start exploring the data or running SQL queries.
@@ -56,10 +65,10 @@ FROM cleaned_orders_step1
 
 #### 🔍 Step 1: Cleaning Order Status & Approval Timestamp
 
-#### 📦 Cleaning order_status
+#### 📦 Cleaning `order_status`
 
 - ❌ Dropped rows where `order_status` was in:
-**'canceled', 'unavailable', 'processing', 'invoiced', 'created', 'approved'**
+`canceled`, `unavailable`, `processing`, `invoiced`, `created`, `approved`
 (These orders were not shipped or delivered, so they cannot proceed through the funnel)
 
 - 📉 Rows Dropped: 1,856
@@ -77,7 +86,7 @@ FROM cleaned_orders_step1
 - 📉 Rows Dropped: 4
 
 #### ✅ Cleaned Data Summary
-**1**. Kept only valid order statuses: 'delivered', 'shipped'
+**1**. Kept only valid order statuses: `delivered`, `shipped`
 
 - ❌ Dropped: 1,856 rows
 
@@ -290,7 +299,7 @@ ORDER BY row_count DESC
 - ❌ 6,907 rows
 
 *Note:
-I was also curious about this aspect, but it doesn’t fit directly into the current step. I wanted to show this data as part of a future analysis. Specifically, I plan to explore if the orders delivered later than estimated are linked to customer complaints.*
+I was curious about this aspect, but it doesn’t fit directly into the current step. I wanted to show this data as part of a future analysis. Specifically, I plan to explore if the orders delivered later than estimated are linked to customer complaints.*
 
 ---
 
